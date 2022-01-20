@@ -31,7 +31,7 @@ Route::prefix('barang')->group(function () {
     Route::get('/', function () {
         // Matches The "/admin/users" URL
     });
-    
+
     Route::get('/add', function () {
         // Matches The "/admin/users" URL
     });
@@ -74,11 +74,25 @@ Route::post("addToCart/{id}", function(Request $request){
 })->name("addToCart");
 
 Route::get("checkout", function(){
-    $invoice_id = "INV_" . Auth::user()->id . now()->timestamp;
+    $user = Auth::user();
 
-    Transaksi::where("user_id", Auth::user()->id)->update([
+    $invoice_id = "INV_" . $user->id . now()->timestamp;
+
+    $transactions = Transaksi::where("user_id", $user->id)->where('status', 1)->get();
+
+    Transaksi::where("user_id", $user->id)->where('status', 1)->update([
         "invoice_id" => $invoice_id,
         "status" => 2
+    ]);
+
+    $total = 0;
+
+    foreach($transactions as $transaction) {
+        $total += $transaction->barang->price * $transaction->jumlah;
+    }
+
+    $user->saldo()->update([
+        'saldo' => $user->saldo->saldo - $total,
     ]);
 
     return redirect()->back()->with("status", "Berhasil Checkout");
@@ -101,7 +115,7 @@ Route::prefix('transaksi')->group(function () {
             "total_cart" => $total_cart
         ]);
     })->name("transaksi");
-    
+
     Route::get('/add', function () {
         // Matches The "/admin/users" URL
     });
@@ -116,7 +130,8 @@ Route::prefix('transaksi')->group(function () {
                 "user_id" => Auth::user()->id,
                 "jumlah" => $request->jumlah,
                 "invoice_id" => $invoice_id,
-                "type" => $request->type
+                "type" => $request->type,
+                "status" => $request->status
             ]);
 
             Saldo::where("user_id", Auth::user()->id)->update([
@@ -125,7 +140,7 @@ Route::prefix('transaksi')->group(function () {
 
             return redirect()->back()->with("status", "Berhasil Topup Saldo");
         }
-        
+
     })->name("transaksi.create");
 
     Route::get('/edit/{id}', function () {

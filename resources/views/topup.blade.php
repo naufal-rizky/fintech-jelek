@@ -14,7 +14,7 @@
                         </div>
                     @endif
 
-                    Saldo: {{ $saldo->saldo }}
+                    Saldo: Rp{{ number_format($saldo->saldo, 0, ',', '.') }}
 
                     <form method="POST" action="{{ route("transaksi.create") }}">
                         @csrf

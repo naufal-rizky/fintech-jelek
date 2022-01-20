@@ -52,6 +52,13 @@ class FirstSeeder extends Seeder
             "role_id" => $siswa->id
         ]);
 
+        $opang = User::create([
+            "name" => "opang",
+            "email" => "opang@gmail.com",
+            "password" => Hash::make("opang"),
+            "role_id" => $siswa->id
+        ]);
+
         $piscok = Barang::create([
             "name" => "Piscok",
             "price" => 2500,
@@ -90,6 +97,11 @@ class FirstSeeder extends Seeder
         Saldo::create([
             "user_id" => $wahyu->id,
             "saldo" => 50000
+        ]);
+
+        Saldo::create([
+            "user_id" => $opang->id,
+            "saldo" => 0
         ]);
 
         //Isi Saldo

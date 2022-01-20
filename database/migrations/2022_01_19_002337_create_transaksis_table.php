@@ -15,12 +15,12 @@ class CreateTransaksisTable extends Migration
     {
         Schema::create('transaksis', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("user_id")->constrained();	
-            $table->foreignId("barang_id")->nullable()->constrained();	
+            $table->foreignId("user_id")->constrained();
+            $table->foreignId("barang_id")->nullable()->constrained();
             $table->integer("jumlah");
-            $table->string("invoice_id")->nullable();	
+            $table->string("invoice_id")->nullable();
             $table->integer("type");
-            $table->integer("status");
+            $table->integer("status")->nullable();
             $table->timestamps();
         });
     }
